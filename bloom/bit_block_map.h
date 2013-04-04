@@ -9,8 +9,6 @@
 #ifndef SIMPLE_BITBLOCKMAP_H_
 #define SIMPLE_BITBLOCKMAP_H_
 
-#include <stdlib.h>
-
 namespace simple {
 
 typedef unsigned long ulong;
@@ -18,7 +16,7 @@ typedef unsigned int uint;
 
 class BitBlockMap {
 public:
-    BitBlockMap() : data_(NULL) {}
+    BitBlockMap() : data_(0) {}
     // num - how many block 
     // order - bits for one block = 2 ^ order
     // aligned to 2^X so we can use fast shift operation   
