@@ -15,15 +15,15 @@ namespace simple {
 
 class Waiter {
 public:
-    Waiter(int max_spin, int sleep_time ) 
+    Waiter(int max_spin, int sleep_time )
         : loop_(0),
         max_spin_(max_spin),
-        sleep_time_(sleep_time_) { 
+        sleep_time_(sleep_time) {
     }
 
-    void Wait() { 
+    void Wait() {
         if ( loop_ < max_spin_ ) {
-            asm volatile ("pasuse");
+            asm volatile ("pause");
             loop_++;
         } else {
             if (sleep_time_ <= 0) {
@@ -42,5 +42,5 @@ private:
 
 }
 #endif //SIMPLE_WAITER_H_
-           
+
 

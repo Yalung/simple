@@ -17,5 +17,11 @@ inline static unsigned long read_tsc(void)
 // because c's rand may call ptread_mutex, so we use tsc to make randoms
 // for my test it is enough
 unsigned long Random(unsigned long  start, unsigned long end) {
-    return start + ((read_tsc() >> 3) % (end - start));
+    return start + ((read_tsc() >> 3) % (end + 1 - start));
 }
+
+void Delay(unsigned long loop) {
+    volatile unsigned long  i __attribute__ ((aligned(sizeof(long))));
+    for (i = 0; i < loop; i++);
+}
+

@@ -4,14 +4,16 @@
 // Author: yalung <yalung929@google.com>
 //
 // single-producer and single-consumer queue lock free
-// 
+//
 
 #ifndef SIMPLE_SPSC_H_
 #define SIMPLE_SPSC_H_
 
 #include <vector>
+#include <cstdlib>
+#include "atomic.h"
 
-namespace {
+namespace simple {
 
 template<typename Tp>
 class SPSC {
@@ -20,7 +22,7 @@ public:
         queue_.reserve(size + 1);
     }
     // return true for success, false for full.
-    bool Enqueue() {
+    bool Enqueue(const Tp& v) {
         if (p_ + 1 == c_) {
             return false;
         }
@@ -29,7 +31,7 @@ public:
         return true;
     }
     // return true for success, false for empty.
-    bool Dequeue(const Tp& v) {    
+    bool Dequeue(Tp& v) {
         if (c_ == p_) {
             return false;
         }
@@ -37,17 +39,19 @@ public:
         ++c_;
         return true;
     }
-    
-private:
-    std::vector<Tp> queue_;    
 
-    //helper 
+private:
+    std::vector<Tp> queue_;
+
+    //helper
     class Cursor {
     public:
-        Cursor(size_t limit): cur_(0), limit_(limit) {
-        }    
+        Cursor(size_t limit): 
+            cur_(0), limit_(limit) {
+        }
         Cursor& operator=(const Cursor& cursor) {
             cur_ = cursor.cur_;
+            limit_ = cursor.limit_;
             return *this;
         }
 
@@ -56,23 +60,24 @@ private:
         }
 
         Cursor operator+(size_t n) {
-            Cursor tmp;
-            tmp.cur_ = (cur_ + n) / (limit_ + 1);
-            return tmp;
+            Cursor result(limit_);
+            result.cur_ = (cur_ + n) % (limit_ + 1);
+            return result;
         }
 
         Cursor& operator++() {
-            size_t tmp = cur_ + 1;
-
+            Cursor tmp = *this + 1;
             // make sure forwad the cursor never run first than preceding codes.
             // according to intel cpu manual.
             // loads and stores do not reorded afetr stores so compile barrier is enough.
             compile_barrier();
-            cur_ = tmp.cur_; //write to awligned size_t is atomic 
+            cur_ = tmp.cur_; //write to awligned size_t is atomic
+            return *this;
         }
-        private:
-            volatile size_t cur_ __attribute__ ((aligned(sizeof(size_t)))); 
-            size_t limit_;
+
+        volatile size_t cur_ __attribute__ ((aligned(sizeof(size_t))));
+        size_t limit_;
+
         };
 
         Cursor p_;     //producer

@@ -15,12 +15,12 @@ namespace simple {
 
 class SpinLock {
 public:
-    enum { FREE = 0, LOCKED = 1 }
+    enum { FREE = 0, LOCKED = 1 };
 
     SpinLock() : lock_(FREE) { }
 
     bool TryLock() {
-        return atomic::compare_and_swap(&lock_, FREE, LOCKED);
+        return atomic_compare_and_swap(&lock_, FREE, LOCKED);
     }
 
     void Lock() {
