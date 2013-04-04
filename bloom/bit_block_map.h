@@ -1,5 +1,3 @@
-// Copyright (c) 2013, YALUNG
-// All rights reserved.
 //
 // Author: yalung <yalung929@google.com>
 //

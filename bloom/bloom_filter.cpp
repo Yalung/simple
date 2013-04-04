@@ -1,5 +1,3 @@
-// Copyright (c) 2013, YALUNG
-// All rights reserved.
 //
 // Author: yalung <yalung929@google.com>
 //
@@ -9,6 +7,7 @@
 
 #include "bloom_filter.h"
 #include <math.h>
+#include "murmur.h"
 
 using namespace simple; 
 
@@ -83,7 +82,8 @@ void BloomFilterBase::SetHashFunc(BloomHashFunc bhf) {
 }
 
 void BloomFilterBase::MurMur(const void* data, uint len, ulong hash[2]) {
-    
+
+    MurmurHash3_x64_128(data, len, 0x97c29b3a, hash);
 }
 
 BloomFilterBase::~BloomFilterBase() {

@@ -1,6 +1,4 @@
-// Copyright (c) 2012, YALUNG
-// All rights reserved.
-
+//
 // Author: yalung <yalung929@google.com>
 //
 // single-producer and single-consumer queue lock free
