@@ -39,9 +39,9 @@ void BloomFilterBase::Insert(const void* data, uint len) {
     
     bhf_(data, len, hash);
    
-     uint i;
+    uint i;
     for(i = 0; i < k_; i++) {
-        bbm_.Add((hash[0] + hash[2] * i) % m_);
+        bbm_.Add((hash[0] + hash[1] * i) % m_);
     }
 }
 
@@ -54,7 +54,7 @@ void BloomFilterBase::DoRemove(const void* data, uint len) {
 
      uint i;
     for(i = 0; i < k_; i++) {
-        bbm_.Sub((hash[0] + hash[2] * i) % m_);
+        bbm_.Sub((hash[0] + hash[1] * i) % m_);
     }
 }
 
@@ -67,7 +67,7 @@ bool BloomFilterBase::Contains(const void* data, uint len) const {
     uint i;
     for(i = 0; i < k_; i++) {
         
-        if (!bbm_.Get((hash[0] + hash[2] * i) % m_)) {
+        if (!bbm_.Get((hash[0] + hash[1] * i) % m_)) {
             return false;
         }
     }

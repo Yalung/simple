@@ -41,6 +41,9 @@ public:
 
     void SetHashFunc(BloomHashFunc bhf);
 
+    ulong m() const { return m_;  }
+    uint k() const { return k_; }
+
 protected:
     void DoRemove(const void* data, uint len);
 
