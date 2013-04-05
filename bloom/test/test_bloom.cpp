@@ -98,7 +98,7 @@ void TestSearch(BloomFilterBase* bf, ulong n) {
     
     ulong end = read_tsc();
 
-    printf("speed: %ld/s\n", n * 10 / ((end - start) / 1000000000) );
+    printf("speed: %ld/s\n", ulong( (double)n * 10.0 * 1000 / (end - start) * 1000000 ) );
 
     ulong error = 0;
     for (i = 0; i < n * 10; i++) {
@@ -108,10 +108,10 @@ void TestSearch(BloomFilterBase* bf, ulong n) {
        data += 1; //even numer
 
        if ( bf->Contains(&data, sizeof(ulong)) )
-         error++;
+           error++;
     }
 
-    printf("p:      %lf\n", ((double)error) / n * 10.0 );
+    printf("p:      %lf\n", ((double)error) / (n * 10.0) );
 }
 
 int main(int argc, char** argv) {
