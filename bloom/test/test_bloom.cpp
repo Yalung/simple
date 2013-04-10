@@ -2,25 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/time.h>
 #include <time.h>
 #include <assert.h>
 #include "md5.h"
-
-//copyed from kernel source for test only, must run on x86 64bit
-#define DECLARE_ARGS(val, low, high)    unsigned low, high
-#define EAX_EDX_VAL(val, low, high) ((low) | ((unsigned long)(high) << 32))
-#define EAX_EDX_ARGS(val, low, high)    "a" (low), "d" (high)
-#define EAX_EDX_RET(val, low, high) "=a" (low), "=d" (high)
-
-inline static unsigned long read_tsc(void)
-{
-    DECLARE_ARGS(val, low, high);
-
-    asm volatile("rdtsc" : EAX_EDX_RET(val, low, high));
-
-    return EAX_EDX_VAL(val, low, high);
-}
-
 
 using namespace simple;
 
@@ -88,17 +73,23 @@ void TestSearch(BloomFilterBase* bf, ulong n) {
         bf->Insert(&data, sizeof(ulong));        
     }
 
-    ulong start = read_tsc();
-    
+    struct timeval tv_start, tv_end;
+    struct timezone tz;
+
+    gettimeofday(&tv_start, &tz);
+
     // do not use rand, we just test speed of search.
     // rand will eat some cpu.
     for (i = 0; i < n * 10; i++) {
-        bf->Contains(&i, sizeof(ulong));
+         bf->Contains(&i, sizeof(ulong));
     }
     
-    ulong end = read_tsc();
+    gettimeofday(&tv_end, &tz);
 
-    printf("speed: %ld/s\n", ulong( (double)n * 10.0 * 1000 / (end - start) * 1000000 ) );
+    ulong diff = (tv_end.tv_sec * 1000000 + tv_end.tv_usec) -
+                 (tv_start.tv_sec * 1000000 + tv_start.tv_usec);
+
+    printf("speed: %ld/s\n", ulong(n * 10.0 / diff * 1000000)  );
 
     ulong error = 0;
     for (i = 0; i < n * 10; i++) {
