@@ -22,6 +22,6 @@ unsigned long Random(unsigned long  start, unsigned long end) {
 
 void Delay(unsigned long loop) {
     volatile unsigned long  i __attribute__ ((aligned(sizeof(long))));
-    for (i = 0; i < loop; i++);
+    for (i = 0; i < loop; i++){}
 }
 
