@@ -1,7 +1,7 @@
 //
 // Author: yalung <yalung929@google.com>
 // 
-// a muti-bits bit map used for standard/counter bloom filter 
+// A muti-bits bit map used for standard/counter bloom filter 
 // 
 
 #include "bit_block_map.h" 
